@@ -33,6 +33,7 @@ func main() {
 	http.HandleFunc("/sign-up.html", viewHandler2)
 	http.HandleFunc("/sign-in.html", viewHandler3)
 	http.HandleFunc("/save/", saveHandler)
+	http.HandleFunc("/check/", checkHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
@@ -73,6 +74,7 @@ func viewHandler3(w http.ResponseWriter, r *http.Request) {
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 
+	r.ParseForm()
 	username := r.FormValue("username")
 	password := r.FormValue("pwd")
 	firstName := r.FormValue("fName")
@@ -87,5 +89,22 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 		Birthdate: bDate}
 
 	users = append(users, newUser)
+	http.Redirect(w, r, "/index.html", http.StatusFound)
+}
+
+func checkHandler(w http.ResponseWriter, r *http.Request) {
+
+	r.ParseForm()
+	username := r.FormValue("username1")
+	password := r.FormValue("pwd2")
+
+	for _, a := range users {
+		if a.UserName == username {
+			if a.Password == password {
+				http.Redirect(w, r, "/sign-in.html", http.StatusFound)
+				return
+			}
+		}
+	}
 	http.Redirect(w, r, "/index.html", http.StatusFound)
 }
