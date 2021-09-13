@@ -16,10 +16,6 @@ type user struct {
 	Birthdate string `json:"bDate"`
 }
 
-type Page struct {
-	Body []byte
-}
-
 type table struct {
 	UserName1 string
 	UsersData []user
@@ -31,16 +27,11 @@ type message struct {
 
 var users []user
 
-/**{
-	{UserName: "Juan", Password: "1234", FirstName: "Juan", LastName: "Torres", Birthdate: "2002-06-15"},
-	{UserName: "Pablo", Password: "1234", FirstName: "Pablo", LastName: "Ramos", Birthdate: "2005-07-12"},
-}**/
-
 var currentUser string
 var messageSignIn string
 var messageSignUp string
 
-const dataPath string = "data/users.txt"
+const DataPath string = "data/users.txt"
 
 func main() {
 	readFile()
@@ -52,15 +43,6 @@ func main() {
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
-}
-
-func loadPage(title string) (*Page, error) {
-	filename := title + ".html"
-	body, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-	return &Page{Body: body}, nil
 }
 
 func viewHandler1(w http.ResponseWriter, r *http.Request) {
@@ -151,7 +133,7 @@ func writeFile() {
 	if err1 != nil {
 		log.Fatal(err1)
 	} else {
-		err := ioutil.WriteFile(dataPath, content, 0644)
+		err := ioutil.WriteFile(DataPath, content, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -160,7 +142,7 @@ func writeFile() {
 }
 
 func readFile() {
-	content, err := ioutil.ReadFile(dataPath)
+	content, err := ioutil.ReadFile(DataPath)
 	if err != nil {
 		log.Fatal(err)
 	} else {
