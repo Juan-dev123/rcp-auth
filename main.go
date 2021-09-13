@@ -19,14 +19,23 @@ type Page struct {
 	Body []byte
 }
 
-type row struct {
+type table struct {
+	UserName1 string
 	UsersData []user
+}
+
+type message struct {
+	Message string
 }
 
 var users = []user{
 	{UserName: "Juan", Password: "1234", FirstName: "Juan", LastName: "Torres", Birthdate: "22"},
 	{UserName: "Pablo", Password: "1234", FirstName: "Pablo", LastName: "Ramos", Birthdate: "22"},
 }
+
+var currentUser string
+var messageSignIn string
+var messageSignUp string
 
 func main() {
 	http.HandleFunc("/index.html", viewHandler1)
@@ -49,22 +58,24 @@ func loadPage(title string) (*Page, error) {
 }
 
 func viewHandler1(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[1:]
-	p, _ := loadPage(title)
+	messageSignUp = ""
+	p := loadInfo(messageSignIn)
 	t, _ := template.ParseFiles("index.html")
 	t.Execute(w, p)
 }
 
 func viewHandler2(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[1:]
-	p, _ := loadPage(title)
+	messageSignIn = ""
+	p := loadInfo(messageSignUp)
 	t, _ := template.ParseFiles("sign-up.html")
 	t.Execute(w, p)
 }
 
 func viewHandler3(w http.ResponseWriter, r *http.Request) {
-	var data *row
-	data = &row{
+	r.ParseForm()
+	var data *table
+	data = &table{
+		UserName1: currentUser,
 		UsersData: users,
 	}
 	t, _ := template.ParseFiles("sign-in.html")
@@ -77,23 +88,36 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	username := r.FormValue("username")
 	password := r.FormValue("pwd")
+	password1 := r.FormValue("pwd1")
 	firstName := r.FormValue("fName")
 	lastName := r.FormValue("lName")
 	bDate := r.FormValue("bDate")
 
-	newUser := user{
-		UserName:  username,
-		Password:  password,
-		FirstName: firstName,
-		LastName:  lastName,
-		Birthdate: bDate}
+	if username == "" || password == "" || firstName == "" || lastName == "" || bDate == "" {
+		messageSignUp = "Please fill all the camps"
+		http.Redirect(w, r, "/sign-up.html", http.StatusFound)
+		return
+	} else if password != password1 {
+		messageSignUp = "The passwords do not coincide"
+		http.Redirect(w, r, "/sign-up.html", http.StatusFound)
+		return
+	} else {
+		newUser := user{
+			UserName:  username,
+			Password:  password,
+			FirstName: firstName,
+			LastName:  lastName,
+			Birthdate: bDate}
 
-	users = append(users, newUser)
-	http.Redirect(w, r, "/index.html", http.StatusFound)
+		users = append(users, newUser)
+		messageSignIn = "User registered successfully"
+		http.Redirect(w, r, "/index.html", http.StatusFound)
+	}
 }
 
 func checkHandler(w http.ResponseWriter, r *http.Request) {
 
+	messageSignIn = ""
 	r.ParseForm()
 	username := r.FormValue("username1")
 	password := r.FormValue("pwd2")
@@ -101,10 +125,16 @@ func checkHandler(w http.ResponseWriter, r *http.Request) {
 	for _, a := range users {
 		if a.UserName == username {
 			if a.Password == password {
+				currentUser = username
 				http.Redirect(w, r, "/sign-in.html", http.StatusFound)
 				return
 			}
 		}
 	}
+	messageSignIn = "Username or password are incorrects"
 	http.Redirect(w, r, "/index.html", http.StatusFound)
+}
+
+func loadInfo(info string) *message {
+	return &message{Message: info}
 }

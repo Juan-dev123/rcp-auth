@@ -27,7 +27,7 @@
         </div>
         <div class="form-group">
             <label for="pwd1">Confirm Password:</label>
-            <input type="password" class="form-control" id="pwd1">
+            <input type="password" class="form-control" name="pwd1" id="pwd1">
         </div>
         <div class="form-group">
             <label for="fName">Fisrt name:</label>
@@ -44,6 +44,9 @@
         <br>
         <button type="submit" class="btn btn-primary">Save</button>
         <a class="btn btn-primary" href="index.html" role="button">Cancel</a>
+        <br>
+        <br>
+        <p>{{.Message}}</p>
     </form>
 </body>
 </html>
