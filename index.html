@@ -11,29 +11,34 @@
 </head>
 
 <body>
-        <div class="py-1 text-center">
-            <img src="logo.jfif" style="width:100px;height:100px;">
-            <h1 class="display-2">RPC::Red de Programación Competitiva</h1>
+    <div class="py-1 text-center">
 
+        <h1 class="display-2">RPC::Red de Programación Competitiva</h1>
+    </div>
+    <form class="w-50 mx-auto p-2" method="POST" action="/check/sign-in">
+        <p>Sign in</p>
+        <hr>
+        <div class="form-group">
+            <label for="username">User Name:</label>
+            <input type="username" class="form-control" name="username" id="username">
         </div>
-        <form class="w-50 mx-auto p-2">
-            <p>Sign in</p>
-            <hr>
-            <div class="form-group">
-                <label for="username">User Name:</label>
-                <input type="username" class="form-control" id="username">
-            </div>
-            <div class="form-group">
-                <label for="pwd">Password:</label>
-                <input type="password" class="form-control" id="pwd">
-            </div>
-            <br>
-            <a class="btn btn-primary" href="sign-in.html" role="button">Sign In</a>
-            <hr>
-            <p>New User</p>
-            <a class="btn btn-primary" href="sign-up.html" role="button">Sign Up</a>
-        </form>
+        <div class="form-group">
+            <label for="pwd">Password:</label>
+            <input type="password" class="form-control"name="password" id="pwd">
+        </div>
+    <br>
+    <input type="submit" value="Save">
+    <button>Sign In</button>
+    <a class="btn btn-primary" role="button">Sign In</a>
+    </form>
+    <div class="w-50 mx-auto p-2">
+        <hr>
+        <p>New User</p>
+        <a class="btn btn-primary" href="sign-up.html" role="button">Sign Up</a>
+    </div>
     
+
+
 </body>
 
 </html>
