@@ -19,6 +19,10 @@ type Page struct {
 	Body []byte
 }
 
+type row struct {
+	UsersData []user
+}
+
 var users = []user{
 	{UserName: "Juan", Password: "1234", FirstName: "Juan", LastName: "Torres", Birthdate: "22"},
 	{UserName: "Pablo", Password: "1234", FirstName: "Pablo", LastName: "Ramos", Birthdate: "22"},
@@ -27,6 +31,7 @@ var users = []user{
 func main() {
 	http.HandleFunc("/index.html", viewHandler1)
 	http.HandleFunc("/sign-up.html", viewHandler2)
+	http.HandleFunc("/sign-in.html", viewHandler3)
 	http.HandleFunc("/save/", saveHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -54,6 +59,16 @@ func viewHandler2(w http.ResponseWriter, r *http.Request) {
 	p, _ := loadPage(title)
 	t, _ := template.ParseFiles("sign-up.html")
 	t.Execute(w, p)
+}
+
+func viewHandler3(w http.ResponseWriter, r *http.Request) {
+	var data *row
+	data = &row{
+		UsersData: users,
+	}
+	t, _ := template.ParseFiles("sign-in.html")
+
+	t.Execute(w, data)
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {

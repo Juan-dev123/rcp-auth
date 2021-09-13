@@ -24,7 +24,14 @@
           </tr>
         </thead>
         <tbody>
-          
+            {{range .UsersData}}
+            <tr>
+                <td>{{.UserName}}</td>
+                <td>{{.LastName}}</td>
+                <td>{{.FirstName}}</td>
+                <td>{{.Birthdate}}</td>
+            </tr>
+            {{end}}
         </tbody>
       </table>
 </body>
