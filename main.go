@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -28,16 +29,21 @@ type message struct {
 	Message string
 }
 
-var users = []user{
-	{UserName: "Juan", Password: "1234", FirstName: "Juan", LastName: "Torres", Birthdate: "22"},
-	{UserName: "Pablo", Password: "1234", FirstName: "Pablo", LastName: "Ramos", Birthdate: "22"},
-}
+var users []user
+
+/**{
+	{UserName: "Juan", Password: "1234", FirstName: "Juan", LastName: "Torres", Birthdate: "2002-06-15"},
+	{UserName: "Pablo", Password: "1234", FirstName: "Pablo", LastName: "Ramos", Birthdate: "2005-07-12"},
+}**/
 
 var currentUser string
 var messageSignIn string
 var messageSignUp string
 
+const dataPath string = "data/users.txt"
+
 func main() {
+	readFile()
 	http.HandleFunc("/index.html", viewHandler1)
 	http.HandleFunc("/sign-up.html", viewHandler2)
 	http.HandleFunc("/sign-in.html", viewHandler3)
@@ -110,6 +116,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 			Birthdate: bDate}
 
 		users = append(users, newUser)
+		writeFile()
 		messageSignIn = "User registered successfully"
 		http.Redirect(w, r, "/index.html", http.StatusFound)
 	}
@@ -137,4 +144,26 @@ func checkHandler(w http.ResponseWriter, r *http.Request) {
 
 func loadInfo(info string) *message {
 	return &message{Message: info}
+}
+
+func writeFile() {
+	content, err1 := json.Marshal(&users)
+	if err1 != nil {
+		log.Fatal(err1)
+	} else {
+		err := ioutil.WriteFile(dataPath, content, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+}
+
+func readFile() {
+	content, err := ioutil.ReadFile(dataPath)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		json.Unmarshal(content, &users)
+	}
 }
